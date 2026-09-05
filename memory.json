@@ -23,5 +23,15 @@
     "stage": "review",
     "decision": "/code-review ran against the build diff (memory.json + 4 new files), confirmed correct via a full read plus running both test suites. 2 findings, both fixed: (1) memory.json's plan-eng-review timestamp was invented out of chronological order relative to later real-clock entries -- corrected to 2026-09-05T19:20:46, matching the actual eng-review-test-plan artifact's filename timestamp; (2) cli.py's manual `raw[:-1] if raw.endswith(\"\\n\") else raw` replaced with the equivalent, clearer stdlib `removesuffix(\"\\n\")`. Re-ran test_strength.py and verify.py after both fixes -- still exit 0 / 7/7 passed.",
     "timestamp": "2026-09-05T19:45:31"
+  },
+  {
+    "stage": "qa",
+    "decision": "/qa's skill wasn't registered under ~/.claude/skills/qa (same gap hit earlier for plan-eng-review); copied it from ~/.claude/skills/gstack/qa. The skill itself is built around browser-driven web-app testing ($B/browse) with no CLI equivalent, so adapted it: exercised cli.py directly with 12 real-user and adversarial inputs (common weak password, shell-metacharacter password -- confirmed no injection since argv is never shell-interpreted, 10,000-char password for perf, CRLF stdin, emoji, blank-line stdin, multi-line stdin, invalid UTF-8 stdin, --help treated literally, both design-doc Success Criteria). 0 issues found, 0 fixes needed. Both design-doc success criteria confirmed. Report: .gstack/qa-reports/qa-report-password-strength-cli-2026-09-05.md",
+    "timestamp": "2026-09-05T19:51:20"
+  },
+  {
+    "stage": "cso",
+    "decision": "Full daily-mode audit (all 15 phases, 8/10 confidence gate). Attack surface is minimal by design: no network, no auth, no deps, no CI/CD, no persistence of the password anywhere. Secrets archaeology clean (git history + tracked files scanned, nothing found). Only one candidate finding surfaced: cli.py:9 accepts the password via argv (CWE-214, process-list/shell-history visibility). Independent verifier subagent scored it 3/10 -- not actionable for a single-user, no-persistence, no-multi-tenancy local CLI where stdin is already offered as the safer path -- so it was filtered by the confidence gate, not reported. Verdict: 0 findings. Non-security hygiene note (not a finding): .gstack/ is not yet in .gitignore, so local QA/security reports could get committed -- recommend adding it, did not fix since /cso is read-only by design. Report: .gstack/security-reports/2026-09-05-142846.json",
+    "timestamp": "2026-09-05T19:58:56"
   }
 ]
