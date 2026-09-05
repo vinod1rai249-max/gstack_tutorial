@@ -1,0 +1,12 @@
+[
+  {
+    "stage": "office-hours",
+    "decision": "Approved design: Password Strength Checker CLI, Test-First with Dataclass Output (Approach C over recommended Approach B). Three files: strength.py (PasswordResult dataclass + check() pure function), cli.py (thin entry point), test_strength.py (table-driven unit tests). Five rules exactly: length>=8, uppercase, lowercase, digit, special char (string.punctuation). Per-character unicode-aware checks for upper/lower (any(c.isupper() for c in password)), not whole-string. CLI stdin/stdout only, Python only, no external deps.",
+    "timestamp": "2026-09-05T18:59:46"
+  },
+  {
+    "stage": "plan-eng-review",
+    "decision": "4-section review (architecture/code-quality/tests/performance): 2 issues found and resolved -- verify.py asserts by parsing 'Score: N/5' plus counting lines prefixed '- ' (can't access dataclass fields across a subprocess boundary), and a stdin-trailing-newline test case was added. Outside voice (Claude subagent fallback -- Codex auth expired and out of OpenRouter credits) surfaced 7 further spec gaps, all resolved directly: special-character detection is ASCII-only by design (string.punctuation) even though letter-case checks are unicode-aware -- this asymmetry is intentional, not an inconsistency; score is always computed as sum() of the five booleans inside check(), never independently settable; an empty string passed via argv[1] counts as a valid zero-length password (score 0/5), distinct from 'no input' (no argv + TTY stdin, exit 1); test_strength.py owns all rule/edge-case logic against the dataclass, verify.py owns only the CLI I/O contract (argv/stdin/TTY/exit codes/output parsing) via subprocess -- no duplication between the two. Verdict: CLEARED, 0 unresolved decisions, 0 critical failure-mode gaps. Sequential build, no parallelization opportunity (test_strength.py -> strength.py -> cli.py -> verify.py).",
+    "timestamp": "2026-09-05T19:58:35"
+  }
+]
