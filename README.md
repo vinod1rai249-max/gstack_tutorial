@@ -51,9 +51,10 @@ python test_strength.py   # unit tests
 python verify.py          # integration test
 ```
 
-On Windows, `verify.py` skips one of its seven checks (the no-argv + real-TTY
-case) because Windows has no `pty` module in the standard library -- expect
-"7/7" on Linux/macOS but a documented skip on Windows, not a failure.
+`verify.py` runs 8 checks on Linux/macOS (7 base checks plus a no-argv +
+real-TTY check that needs a pty). On Windows there's no `pty` module in the
+standard library, so that check is skipped -- expect "8/8" on Linux/macOS but
+"7/7 checks passed" (with a `[SKIP]` line above it) on Windows, not a failure.
 
 No external dependencies -- Python standard library only.
 
